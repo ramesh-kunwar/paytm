@@ -62,7 +62,7 @@ exports.signup = asyncHandler(async (req, res, next) => {
 
 exports.signin = asyncHandler(async (req, res, next) => {
   // take email and password
-  const { email, password } = req.body;
+  const { email, password, userId } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({
@@ -83,13 +83,46 @@ exports.signin = asyncHandler(async (req, res, next) => {
     });
   }
 
-  const token = await jwt.sign({ email }, CONFIG.JWT_SECRET);
+  const token = jwt.sign({ userId: user._id }, CONFIG.JWT_SECRET);
 
   if (user && matchedPassword) {
     return res.status(200).json({
       success: true,
       msg: "Login successfully",
       token,
+      user,
     });
   }
+});
+
+const updateBody = zod.object({});
+exports.updateUser = asyncHandler(async (req, res, next) => {
+  const { firstName, lastName, password } = req.body;
+  // const id = await User.findOne({ _id: req.userId });
+  console.log(req.userId);
+  let hashedPassword = password;
+
+  if (password) {
+    hashedPassword = await bcrypt.hash(password, 10);
+  } else {
+    hashedPassword = password;
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.userId,
+    {
+      firstName: firstName || req?.body?.firstName,
+      lastName: lastName || req?.body?.lastName,
+      password: hashedPassword,
+    },
+    { new: true }
+  );
+
+  return res.status(200).json({
+    success: true,
+    msg: "User details updated successfully",
+    user,
+  });
+
+  // res.json({ user });
 });
