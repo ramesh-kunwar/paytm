@@ -95,7 +95,6 @@ exports.signin = asyncHandler(async (req, res, next) => {
   }
 });
 
-const updateBody = zod.object({});
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, password } = req.body;
   // const id = await User.findOne({ _id: req.userId });
@@ -125,4 +124,36 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   });
 
   // res.json({ user });
+});
+
+exports.getAllUsers = asyncHandler(async (req, res, next) => {
+  // const { firstName, lastName } = req.query || "";
+  const firstName = req.query.firstName || "";
+  const lastName = req.query.lastName || "";
+  // console.log(filter);
+  console.log(firstName, lastName);
+
+  let user = await User.find({});
+  if (firstName || lastName) {
+    user = await User.find({
+      $and: [
+        {
+          firstName: {
+            $regex: firstName,
+          },
+        },
+        {
+          lastName: {
+            $regex: lastName,
+          },
+        },
+      ],
+    });
+  }
+
+  return res.status(200).json({
+    count: user.length,
+    success: true,
+    user,
+  });
 });
