@@ -1,4 +1,5 @@
 const User = require("../model/userSchema");
+const Account = require("../model/accountSchema");
 const asyncHandler = require("express-async-handler");
 const zod = require("zod");
 const CONFIG = require("../config/config");
@@ -44,6 +45,11 @@ exports.signup = asyncHandler(async (req, res, next) => {
     password: hashedPassword,
   });
   const userId = user._id;
+
+  await Account.create({
+    userId,
+    balance: Math.random() * 10000 + 1,
+  });
 
   const token = jwt.sign(
     {
