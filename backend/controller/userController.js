@@ -163,3 +163,12 @@ exports.getAllUsers = asyncHandler(async (req, res, next) => {
     user,
   });
 });
+
+exports.getUserDetail = asyncHandler(async (req, res, next) => {
+  const user = await User.findOne({ _id: req.userId })
+    .populate("account")
+    .exec();
+  res.status(200).json({
+    user,
+  });
+});

@@ -10,18 +10,21 @@ const SendMoney = () => {
   const name = searchParams.get("firstName");
 
   const sendMoney = async () => {
-    await axios.post(
-      "http://localhost:4000/api/v1/account/transfer",
-      {
-        to: id,
-        amount,
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("token"),
+    await axios
+      .post(
+        "http://localhost:4000/api/v1/account/transfer",
+        {
+          to: id,
+          amount,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        }
+      )
+      .then(() => alert("Transfer successful"))
+      .catch((err) => console.log(err));
   };
   return (
     <div className="container">
