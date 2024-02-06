@@ -14,6 +14,6 @@ const router = express.Router();
 router.post("/signup", signup);
 router.post("/signin", signin);
 router.put("/updateUser", authMiddleware, updateUser);
-router.get("/bulk", authMiddleware, getAllUsers);
+router.get("/bulk", getAllUsers);
 
 module.exports = router;
